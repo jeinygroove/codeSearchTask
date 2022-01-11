@@ -30,9 +30,10 @@ const getTokenEmb = async () => {
 const addCube = async () => {
     const snippets = await pool.query(`SELECT id, code, tokens from "snippets"`);
     await Promise.all(snippets.rows.map(async (snippetObj) => {
-        const cube = snippetObj.tokens.split(' ').filter((t) => t.length !== 0).reduce((prev, token) => prev.map((v, i) => {
+        const snippetTokens = snippetObj.tokens.split(' ')
+        const cube = snippetTokens.filter((t) => t.length !== 0).reduce((prev, token) => prev.map((v, i) => {
             return v + tokensEmb.get(token)[i]
-        }), new Array(100).fill(0)).map((x) => x / 100.0);
+        }), new Array(100).fill(0)).map((x) => x / snippetTokens.length);
         await pool.query(`UPDATE "snippets" set point = cube(array[${cube.join(',')}]) where id = ${snippetObj.id}`);
     }));
 }

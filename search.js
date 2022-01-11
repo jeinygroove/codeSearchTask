@@ -53,7 +53,7 @@ const search = async (query, tokensEmb) => {
 
         const cube = snippetTokensUnique.filter((t) => t.length !== 0).reduce((prev, token) => prev.map((v, i) => {
             return v + tokensEmb.get(token)[i]
-        }), new Array(100).fill(0)).map((x) => x / 100.0);
+        }), new Array(100).fill(0)).map((x) => x / snippetTokensUnique.length);
 
         const res = await pool.query(`
             SELECT code, point FROM snippets
